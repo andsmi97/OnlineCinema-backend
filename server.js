@@ -7,7 +7,8 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const knex = require("knex");
 
-const films = require("./controllers/films");
+const films = require("./controllers/tables/films");
+const users = require("./controllers/tables/users");
 //Database Setup
 const db = knex({
   client: "pg",
@@ -74,6 +75,12 @@ app.post("/films", films.insert);
 app.delete("/films", films.remove);
 app.put("/films", films.update);
 app.get("/films", films.selectMany);
+
+app.get("/users/:id", users.selectOne);
+app.post("/users", users.insert);
+app.delete("/users", users.remove);
+app.put("/users", users.update);
+app.get("/users", users.selectMany);
 
 // Don't stop server in production
 process.on("uncaughtException", err => {
