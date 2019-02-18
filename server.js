@@ -5,41 +5,51 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
-
 const knex = require("knex");
 
+const films = require("./controllers/films");
 //Database Setup
 const db = knex({
   client: "pg",
   connection: process.env.POSTGRES_URI
 });
 
-const FilmName = "test";
-const FilmReleaseDate = "01-01-2018";
-const FilmAgeRestriction = "18";
-const FilmLength = "120";
-const FilmLink = "test";
-const FilmPrice = "500";
-const FilmDescription = "test";
-const FilmBudget = "100";
-const FilmPosterLink = "test";
+const filmname = "test";
+const filmreleasedate = "01-01-2018";
+const filmagerestriction = "18";
+const filmlength = "120";
+const filmlink = "test";
+const filmprice = "500";
+const filmdescription = "test";
+const filmbudget = "100";
+const filmposterlink = "test";
+const filmvievs = 5;
+const copyrightownerid = null;
+const filmmonthlyviews = 5;
 
-db.select()
-  .table("genres")
-  .then(films => console.log(films));
+// db.select()
+//   .table("genres")
+//   .then(films => console.log(films));
 // db("films")
 //   .insert({
-//     FilmName,
-//     FilmReleaseDate,
-//     FilmAgeRestriction,
-//     FilmLength,
-//     FilmLink,
-//     FilmPrice,
-//     FilmPosterLink,
-//     FilmDescription,
-//     FilmBudget
+//     filmname,
+//     filmreleasedate,
+//     filmagerestriction,
+//     filmlength,
+//     filmlink,
+//     filmprice,
+//     filmposterlink,
+//     filmdescription,
+//     filmbudget
 //   })
+//   .returning("*")
 //   .then(films => console.log(films));
+// const filmid = 5;
+// db.select("*")
+//   .from("films")
+//   // .where({ filmid })
+//   .then(result => console.log(result));
+// .then({res=>console.log(res)});
 // Middleware
 app.use(bodyParser.json());
 const whitelist = ["http://localhost:3000", "https://lesnayagavan.ru"];
@@ -58,6 +68,12 @@ app.use(cors());
 app.use(morgan("combined"));
 app.use(helmet());
 app.use(express.json());
+
+app.get("/films/:id", films.selectOne);
+app.post("/films", films.insert);
+app.delete("/films", films.remove);
+app.put("/films", films.update);
+app.get("/films", films.selectMany);
 
 // Don't stop server in production
 process.on("uncaughtException", err => {
