@@ -1,0 +1,32 @@
+version: '3'
+services:
+  # PostgreSQL
+  postgres:
+    container_name: postgres
+    build: ./postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_URL: postgres://admin:password@localhost:5432/onlinecinema
+      POSTGRES_DB: onlinecinema
+      POSTGRES_HOST: postgres
+    # volumes:
+    #   - ./va:/var/lib/postgresql/data
+    ports:
+      - "5432"
+
+  # Backend
+  onlinecinema:
+    container_name: backend
+    build: ./
+    volumes:
+      - ./:/usr/src/onlinecinema
+    command: yarn start
+    working_dir: /usr/src/onlinecinema
+    ports:
+      - "3001:3001"
+    environment:
+      POSTGRES_URI: postgres://admin:password@postgres:5432/onlinecinema
+    links:
+      - postgres
+

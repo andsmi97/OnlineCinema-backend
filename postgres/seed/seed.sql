@@ -1,0 +1,1 @@
+INSERT INTO genres("genrename") VALUES ('drama')
