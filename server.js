@@ -9,7 +9,8 @@ const knex = require("knex");
 
 const films = require("./controllers/tables/films");
 const users = require("./controllers/tables/users");
-const countries = require("./controllers/tables/users");
+const countries = require("./controllers/tables/countries");
+const genres = require("./controllers/tables/genres");
 //Database Setup
 const db = knex({
   client: "pg",
