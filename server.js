@@ -5,54 +5,11 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const knex = require("knex");
+const passportManager = require("./config/passport");
+// const knex = require("knex");
+const router = require("./routes");
+const db = require("./controllers/db");
 
-const films = require("./controllers/tables/films");
-const users = require("./controllers/tables/users");
-const countries = require("./controllers/tables/countries");
-const genres = require("./controllers/tables/genres");
-//Database Setup
-const db = knex({
-  client: "pg",
-  connection: process.env.POSTGRES_URI
-});
-
-const filmname = "test";
-const filmreleasedate = "01-01-2018";
-const filmagerestriction = "18";
-const filmlength = "120";
-const filmlink = "test";
-const filmprice = "500";
-const filmdescription = "test";
-const filmbudget = "100";
-const filmposterlink = "test";
-const filmvievs = 5;
-const copyrightownerid = null;
-const filmmonthlyviews = 5;
-
-// db.select()
-//   .table("genres")
-//   .then(films => console.log(films));
-// db("films")
-//   .insert({
-//     filmname,
-//     filmreleasedate,
-//     filmagerestriction,
-//     filmlength,
-//     filmlink,
-//     filmprice,
-//     filmposterlink,
-//     filmdescription,
-//     filmbudget
-//   })
-//   .returning("*")
-//   .then(films => console.log(films));
-// const filmid = 5;
-// db.select("*")
-//   .from("films")
-//   // .where({ filmid })
-//   .then(result => console.log(result));
-// .then({res=>console.log(res)});
 // Middleware
 app.use(bodyParser.json());
 const whitelist = ["http://localhost:3000", "https://lesnayagavan.ru"];
@@ -72,22 +29,36 @@ app.use(morgan("combined"));
 app.use(helmet());
 app.use(express.json());
 
-app.get("/films/:id", films.selectOne);
-app.post("/films", films.insert);
-app.delete("/films", films.remove);
-app.put("/films", films.update);
-app.get("/films", films.selectMany);
 
-app.get("/users/:id", users.selectOne);
-app.post("/users", users.insert);
-app.delete("/users", users.remove);
-app.put("/users", users.update);
-app.get("/users", users.selectMany);
+// routes setup
+app.use("/", router);
 
-app.post("/countries", countries.insert);
-app.delete("/countries", countries.remove);
-app.put("/countries", countries.update);
-app.get("/countries", countries.selectMany);
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+// error handler
+app.use((err, req, res, next) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  // res.render("error");
+});
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
+app.use(passportManager.initialize());
 
 // Don't stop server in production
 process.on("uncaughtException", err => {

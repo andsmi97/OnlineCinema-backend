@@ -52,8 +52,8 @@ create table Countries (
 /* Table: Cities                                                */
 /*==============================================================*/
 create table Cities (
-   CountryID            SERIAL                 not null,
-   CityID               INT4                 not null,
+   CityID               SERIAL               not null,
+   CountryID            INT4                 not null,
    CityName             VARCHAR(255)         not null,
    constraint PK_CITIES primary key (CityID),
    constraint FK_CITIES_RELATIONS_COUNTRIE foreign key (CountryID)
@@ -65,8 +65,8 @@ create table Cities (
 /* Table: People                                                */
 /*==============================================================*/
 create table People (
-   CityID               SERIAL                 not null,
-   PersonID             INT4                 not null,
+   PersonID             SERIAL                 not null,
+   CityID               INT4                 not null,
    PersonName           VARCHAR(255)         not null,
    PersonBirthday       DATE                 null,
    PersonAvatar         TEXT                 null default 'img/NoAvatarYet.jpg',
