@@ -13,7 +13,7 @@ services:
     # volumes:
     #   - ./va:/var/lib/postgresql/data
     ports:
-      - "5432"
+      - "5432:5432"
 
   # Backend
   onlinecinema:

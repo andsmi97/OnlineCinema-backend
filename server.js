@@ -9,7 +9,7 @@ const passportManager = require("./config/passport");
 // const knex = require("knex");
 const router = require("./routes");
 const db = require("./controllers/db");
-
+const jobs = require("./cronjobs");
 // Middleware
 app.use(bodyParser.json());
 const whitelist = ["http://localhost:3000", "https://lesnayagavan.ru"];
@@ -23,12 +23,12 @@ const corsOptions = {
   }
 };
 
+jobs.job.start();
 // app.use(cors(corsOptions));
 app.use(cors());
 app.use(morgan("combined"));
 app.use(helmet());
 app.use(express.json());
-
 
 // routes setup
 app.use("/", router);

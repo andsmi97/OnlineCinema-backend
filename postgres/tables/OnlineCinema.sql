@@ -1,15 +1,17 @@
 /*==============================================================*/
-/* DBMS name:      PostgreSQL 8                                 */
-/* Created on:     18.02.2019 15:42:51                          */
+/* DBMS name:      PostgreSQL 9.x                               */
+/* Created on:     01.04.2019 16:12:55                          */
 /*==============================================================*/
 
 
 /*==============================================================*/
 /* Table: CopyrightOwners                                       */
 /*==============================================================*/
-create table CopyrightOwners (
-   CopyrightOwnerID     SERIAL                 not null,
-   CopyrightOwnerName   VARCHAR(255)         null,
+create table CopyrightOwners
+(
+   CopyrightOwnerID SERIAL not null,
+   CopyrightOwnerName VARCHAR(255) null,
+   CopyrightOwnerAccount VARCHAR(30) null,
    constraint PK_COPYRIGHTOWNERS primary key (CopyrightOwnerID),
    constraint AK_KEY_2_COPYRIGH unique (CopyrightOwnerName)
 );
@@ -17,22 +19,23 @@ create table CopyrightOwners (
 /*==============================================================*/
 /* Table: Films                                                 */
 /*==============================================================*/
-create table Films (
-   FilmID               SERIAL                 not null,
-   FilmName             VARCHAR(255)         not null,
-   FilmReleaseDate      DATE                 null,
-   FilmAgeRestriction   INT2                 null,
-   FilmLength           INT4                 null,
-   FilmLink             TEXT                 null default 'Films/NoFilmYet.avi',
-   FilmPrice            FLOAT8               null default 99
+create table Films
+(
+   FilmID SERIAL not null,
+   FilmName VARCHAR(255) not null,
+   FilmReleaseDate DATE null,
+   FilmAgeRestriction INT2 null,
+   FilmLength INT4 null,
+   FilmLink TEXT null default 'Films/NoFilmYet.avi',
+   FilmPrice FLOAT8 null default 99
       constraint CKC_FILMPRICE_FILMS check (FilmPrice is null or (FilmPrice between 0 and 2000)),
-   FilmPosterLink       TEXT                 null default 'img/NoPosterYet.jpg',
-   FilmDescription      TEXT                 null,
-   FilmBudget           FLOAT8               null,
-   FilmViews            INT8                 null default 0
+   FilmPosterLink TEXT null default 'img/NoPosterYet.jpg',
+   FilmDescription TEXT null,
+   FilmBudget FLOAT8 null,
+   FilmViews INT8 null default 0
       constraint CKC_FILMVIEWS_FILMS check (FilmViews is null or (FilmViews >= 0)),
-   CopyrightOwnerID     INT4                 null,
-   FilmMonltyViews      INT4                 null,
+   CopyrightOwnerID INT4 null,
+   FilmMonltyViews INT4 null,
    constraint PK_FILMS primary key (FilmID),
    constraint FK_FILMS_FILMSCOPY_COPYRIGH foreign key (CopyrightOwnerID)
       references CopyrightOwners (CopyrightOwnerID)
@@ -42,19 +45,21 @@ create table Films (
 /*==============================================================*/
 /* Table: Countries                                             */
 /*==============================================================*/
-create table Countries (
-   CountryID            SERIAL                 not null,
-   CountryName          VARCHAR(60)          not null,
+create table Countries
+(
+   CountryID SERIAL not null,
+   CountryName VARCHAR(60) not null,
    constraint PK_COUNTRIES primary key (CountryID)
 );
 
 /*==============================================================*/
 /* Table: Cities                                                */
 /*==============================================================*/
-create table Cities (
-   CityID               SERIAL               not null,
-   CountryID            INT4                 not null,
-   CityName             VARCHAR(255)         not null,
+create table Cities
+(
+   CityID SERIAL not null,
+   CountryID INT4 not null,
+   CityName VARCHAR(255) not null,
    constraint PK_CITIES primary key (CityID),
    constraint FK_CITIES_RELATIONS_COUNTRIE foreign key (CountryID)
       references Countries (CountryID)
@@ -64,13 +69,14 @@ create table Cities (
 /*==============================================================*/
 /* Table: People                                                */
 /*==============================================================*/
-create table People (
-   PersonID             SERIAL                 not null,
-   CityID               INT4                 not null,
-   PersonName           VARCHAR(255)         not null,
-   PersonBirthday       DATE                 null,
-   PersonAvatar         TEXT                 null default 'img/NoAvatarYet.jpg',
-   PersonFacts          TEXT                 null,
+create table People
+(
+   PersonID SERIAL not null,
+   CityID INT4 null,
+   PersonName VARCHAR(255) not null,
+   PersonBirthday DATE null,
+   PersonAvatar TEXT null default 'img/NoAvatarYet.jpg',
+   PersonFacts TEXT null,
    constraint PK_PEOPLE primary key (PersonID),
    constraint FK_PEOPLE_RELATIONS_CITIES foreign key (CityID)
       references Cities (CityID)
@@ -80,13 +86,14 @@ create table People (
 /*==============================================================*/
 /* Table: Awards                                                */
 /*==============================================================*/
-create table Awards (
-   AwardID              SERIAL                 not null,
-   AwardName            VARCHAR(255)         not null,
-   AwardCategory        VARCHAR(255)         not null,
-   AwardYear            DATE                 not null,
-   FilmID               INT4                 null,
-   PersonID             INT4                 null,
+create table Awards
+(
+   AwardID SERIAL not null,
+   AwardName VARCHAR(255) not null,
+   AwardCategory VARCHAR(255) not null,
+   AwardYear DATE not null,
+   FilmID INT4 null,
+   PersonID INT4 null,
    constraint PK_AWARDS primary key (AwardID),
    constraint FK_AWARDS_REFERENCE_FILMS foreign key (FilmID)
       references Films (FilmID),
@@ -125,10 +132,11 @@ FilmPrice
 /*==============================================================*/
 /* Table: FilmsActors                                           */
 /*==============================================================*/
-create table FilmsActors (
-   FilmID               INT4                 not null,
-   PersonID             INT4                 not null,
-   Role                 VARCHAR(255)         null,
+create table FilmsActors
+(
+   FilmID INT4 not null,
+   PersonID INT4 not null,
+   Role VARCHAR(255) null,
    constraint PK_FILMSACTORS primary key (FilmID, PersonID),
    constraint FK_FILMSACT_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -155,9 +163,10 @@ PersonID
 /*==============================================================*/
 /* Table: FilmsComposers                                        */
 /*==============================================================*/
-create table FilmsComposers (
-   FilmID               INT4                 not null,
-   PersonID             INT4                 not null,
+create table FilmsComposers
+(
+   FilmID INT4 not null,
+   PersonID INT4 not null,
    constraint PK_FILMSCOMPOSERS primary key (FilmID, PersonID),
    constraint FK_FILMSCOM_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -184,9 +193,10 @@ PersonID
 /*==============================================================*/
 /* Table: FilmsCountries                                        */
 /*==============================================================*/
-create table FilmsCountries (
-   FilmID               INT4                 not null,
-   CountryID            INT4                 not null,
+create table FilmsCountries
+(
+   FilmID INT4 not null,
+   CountryID INT4 not null,
    constraint PK_FILMSCOUNTRIES primary key (FilmID, CountryID),
    constraint FK_FILMSCOU_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -213,9 +223,10 @@ CountryID
 /*==============================================================*/
 /* Table: FilmsDesigners                                        */
 /*==============================================================*/
-create table FilmsDesigners (
-   FilmID               INT4                 not null,
-   PersonID             INT4                 not null,
+create table FilmsDesigners
+(
+   FilmID INT4 not null,
+   PersonID INT4 not null,
    constraint PK_FILMSDESIGNERS primary key (FilmID, PersonID),
    constraint FK_FILMSDES_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -242,9 +253,10 @@ PersonID
 /*==============================================================*/
 /* Table: FilmsDirectors                                        */
 /*==============================================================*/
-create table FilmsDirectors (
-   FilmID               INT4                 not null,
-   PersonID             INT4                 not null,
+create table FilmsDirectors
+(
+   FilmID INT4 not null,
+   PersonID INT4 not null,
    constraint PK_FILMSDIRECTORS primary key (FilmID, PersonID),
    constraint FK_FILMSDIR_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -271,18 +283,20 @@ PersonID
 /*==============================================================*/
 /* Table: Genres                                                */
 /*==============================================================*/
-create table Genres (
-   GenreID              SERIAL                 not null,
-   GenreName            VARCHAR(255)         not null,
+create table Genres
+(
+   GenreID SERIAL not null,
+   GenreName VARCHAR(255) not null,
    constraint PK_GENRES primary key (GenreID)
 );
 
 /*==============================================================*/
 /* Table: FilmsGenres                                           */
 /*==============================================================*/
-create table FilmsGenres (
-   FilmID               INT4                 not null,
-   GenreID              INT4                 not null,
+create table FilmsGenres
+(
+   FilmID INT4 not null,
+   GenreID INT4 not null,
    constraint PK_FILMSGENRES primary key (FilmID, GenreID),
    constraint FK_FILMSGEN_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -309,9 +323,10 @@ GenreID
 /*==============================================================*/
 /* Table: FilmsProducers                                        */
 /*==============================================================*/
-create table FilmsProducers (
-   FilmID               INT4                 not null,
-   PersonID             INT4                 not null,
+create table FilmsProducers
+(
+   FilmID INT4 not null,
+   PersonID INT4 not null,
    constraint PK_FILMSPRODUCERS primary key (FilmID, PersonID),
    constraint FK_FILMSPRO_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -338,9 +353,10 @@ PersonID
 /*==============================================================*/
 /* Table: FilmsScriptwriters                                    */
 /*==============================================================*/
-create table FilmsScriptwriters (
-   FilmID               INT4                 not null,
-   PersonID             INT4                 not null,
+create table FilmsScriptwriters
+(
+   FilmID INT4 not null,
+   PersonID INT4 not null,
    constraint PK_FILMSSCRIPTWRITERS primary key (FilmID, PersonID),
    constraint FK_FILMSSCR_RELATIONS_FILMS foreign key (FilmID)
       references Films (FilmID)
@@ -372,19 +388,60 @@ CityID
 );
 
 /*==============================================================*/
+/* Table: Settlements                                           */
+/*==============================================================*/
+create table Settlements
+(
+   SettlementID SERIAL not null,
+   SettlementDate DATE null,
+   constraint PK_SETTLEMENTS primary key (SettlementID)
+);
+
+/*==============================================================*/
+/* Table: SettlementsCopyrightowners                            */
+/*==============================================================*/
+create table SettlementsCopyrightowners
+(
+   SettlementID INT4 not null,
+   CopyrightOwnerID INT4 not null,
+   Amount FLOAT8 not null,
+   constraint PK_SETTLEMENTSCOPYRIGHTOWNERS primary key (SettlementID, CopyrightOwnerID),
+   constraint FK_SETTLEME_REFERENCE_SETTLEME foreign key (SettlementID)
+      references Settlements (SettlementID),
+   constraint FK_SETTLEME_REFERENCE_COPYRIGH foreign key (CopyrightOwnerID)
+      references CopyrightOwners (CopyrightOwnerID)
+);
+
+/*==============================================================*/
 /* Table: Users                                                 */
 /*==============================================================*/
-create table Users (
-   UserID               SERIAL                 not null,
-   UserName             VARCHAR(255)         not null,
-   UserStatus           VARCHAR(30)          not null default 'Inactive'
+create table Users
+(
+   UserID SERIAL not null,
+   UserName VARCHAR(255) not null,
+   UserStatus VARCHAR(30) not null default 'Inactive'
       constraint CKC_USERSTATUS_USERS check (UserStatus in ('Inactive','Basic','Standard','Premium')),
-   UserMoney            FLOAT8               not null default 0,
-   UserStatusDueDate    DATE                 null,
-   UserEmail            VARCHAR(255)         not null,
-   UserPassword         VARCHAR(255)         not null,
-   UserSpent            FLOAT8               null default 0,
+   UserMoney FLOAT8 not null default 0,
+   UserStatusDueDate DATE null,
+   UserEmail VARCHAR(255) not null,
+   UserPassword VARCHAR(255) not null,
+   UserSpent FLOAT8 null default 0,
    constraint PK_USERS primary key (UserID)
+);
+
+/*==============================================================*/
+/* Table: UserPayments                                          */
+/*==============================================================*/
+create table UserPayments (
+   UserPaymentID SERIAL not null,
+   UserID INT4 null,
+   Amount FLOAT8 null,
+   PaymentDate DATE null,
+   constraint PK_USERPAYMENTS primary key (UserPaymentID),
+   constraint FK_USERPAYM_REFERENCE_USERS foreign key (UserID)
+      references Users (UserID)
+      on delete restrict on
+update restrict
 );
 
 /*==============================================================*/
@@ -395,13 +452,28 @@ UserEmail
 );
 
 /*==============================================================*/
+/* Table: UsersBenchmarks                                       */
+/*==============================================================*/
+create table UsersBenchmarks
+(
+   UserBenchmarkID SERIAL not null,
+   UserID INT4 null,
+   UserBenchmarkName VARCHAR(100) null,
+   UserBenchmarkDate DATE null,
+   constraint PK_USERSBENCHMARKS primary key (UserBenchmarkID),
+   constraint FK_USERSBEN_REFERENCE_USERS foreign key (UserID)
+      references Users (UserID)
+);
+
+/*==============================================================*/
 /* Table: UsersFilmsLibrary                                     */
 /*==============================================================*/
-create table UsersFilmsLibrary (
-   FilmID               INT4                 not null,
-   UserID               INT4                 not null,
-   DateAdd              DATE                 not null,
-   DateRemove           DATE                 null,
+create table UsersFilmsLibrary
+(
+   FilmID INT4 not null,
+   UserID INT4 not null,
+   DateAdd DATE not null,
+   DateRemove DATE null,
    constraint PK_USERSFILMSLIBRARY primary key (FilmID, UserID),
    constraint FK_USERSFIL_USERSFILM_FILMS_1 foreign key (FilmID)
       references Films (FilmID)
@@ -428,10 +500,11 @@ UserID
 /*==============================================================*/
 /* Table: UsersFilmsRatings                                     */
 /*==============================================================*/
-create table UsersFilmsRatings (
-   UserID               INT4                 not null,
-   FilmID               INT4                 not null,
-   Rating               INT2                 not null,
+create table UsersFilmsRatings
+(
+   UserID INT4 not null,
+   FilmID INT4 not null,
+   Rating INT2 not null,
    constraint PK_USERSFILMSRATINGS primary key (UserID, FilmID),
    constraint FK_USERSFIL_USERSFILM_USERS foreign key (UserID)
       references Users (UserID)

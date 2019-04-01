@@ -9,6 +9,7 @@ const db = require("knex")({
 
 //GET  /api/auth/verify/:id
 const sendActivation = user => {
+  //TODO change to settings
   const host = "localhost:3000";
   const link = `http://${host}/api/auth/verify/${user.userid}`;
   const mailOptions = {
@@ -21,6 +22,7 @@ const sendActivation = user => {
       ">Нажмите для подтверждения</a>"
   };
   transport.options.sendMail(mailOptions, (error, response) => {
+    //TODO change error logs
     if (error) {
       console.log(error);
     } else {
@@ -45,7 +47,8 @@ const signUp = (req, res) => {
         (async () => {
           const [userData] = await db("users")
             .insert({ username, userpassword: hash, useremail })
-            .returning("*");
+            .returning(["username","userpassword", "userstatus"]);
+          console.log(userData);
           //send email confirmation
           //   sendActivation(userData);
           const token = jwt.sign(userData, config.secret, {
@@ -62,7 +65,7 @@ const signIn = (req, res) => {
   const { username, password } = req.body;
   (async () => {
     const [user] = await db
-      .select("userpassword")
+      .select("username", "userstatus", "userpassword")
       .from("users")
       .where({ username });
     if (!user) {
